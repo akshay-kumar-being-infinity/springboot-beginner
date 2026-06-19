@@ -1,2 +1,2 @@
-alert("Wellcome to session 2");
+// alert("Wellcome to session 2");
 console.log("Javascript has started!");

@@ -1,0 +1,593 @@
+cat > /mnt/user-data/outputs/cohort2_leaderboard.html << 'HTMLEOF'
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BeingInfinity · SpringBoot Cohort 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --ink:#0a0a0f;
+  --ink2:#13131a;
+  --ink3:#1c1c28;
+  --ink4:#252535;
+  --line:#2e2e42;
+  --line2:#3a3a52;
+  --muted:#6b6b8a;
+  --muted2:#9494b0;
+  --fg:#e8e8f4;
+  --fg2:#c0c0d8;
+  --white:#ffffff;
+  --indigo:#6366f1;
+  --indigo-d:#4f46e5;
+  --violet:#8b5cf6;
+  --green:#10b981;
+  --amber:#f59e0b;
+  --red:#ef4444;
+  --cyan:#06b6d4;
+  --r:8px;
+  --r2:12px;
+  --r3:16px;
+}
+
+body{font-family:'Inter',sans-serif;background:var(--ink);color:var(--fg);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--ink2);border-bottom:1px solid var(--line);padding:0 32px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.tb-left{display:flex;align-items:center;gap:12px}
+.tb-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--indigo),var(--violet));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0}
+.tb-brand{font-size:13px;font-weight:700;color:var(--fg);letter-spacing:-.2px}
+.tb-sep{color:var(--line2);font-size:16px}
+.tb-title{font-size:12px;color:var(--muted2);font-weight:500}
+.tb-right{display:flex;align-items:center;gap:8px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s ease-in-out infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-live{font-size:11px;font-weight:600;color:var(--green);letter-spacing:.3px}
+
+/* ── HERO ── */
+.hero{background:var(--ink2);border-bottom:1px solid var(--line);padding:32px 32px 28px}
+.hero-inner{max-width:1400px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:start}
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.hero-eyebrow::before{content:'';width:20px;height:2px;background:var(--indigo);display:inline-block}
+.hero-h1{font-size:32px;font-weight:900;color:var(--white);line-height:1.1;letter-spacing:-.8px}
+.hero-h1 em{font-style:normal;color:transparent;-webkit-text-stroke:1px var(--indigo)}
+.hero-sub{font-size:13px;color:var(--muted2);margin-top:8px;line-height:1.6}
+
+/* session track */
+.session-track{display:flex;align-items:stretch;gap:0;margin-top:20px;border:1px solid var(--line);border-radius:var(--r2);overflow:hidden}
+.st-item{flex:1;padding:10px 14px;border-right:1px solid var(--line);position:relative}
+.st-item:last-child{border-right:none}
+.st-item.done{background:rgba(99,102,241,.08)}
+.st-item.active{background:rgba(99,102,241,.15)}
+.st-item.upcoming{opacity:.45}
+.st-num{font-size:9px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.st-item.done .st-num{color:var(--indigo)}
+.st-item.active .st-num{color:var(--violet)}
+.st-name{font-size:12px;font-weight:700;color:var(--fg2)}
+.st-item.done .st-name{color:var(--fg)}
+.st-item.active .st-name{color:var(--white)}
+.st-tag{display:inline-block;margin-top:5px;font-size:9px;font-weight:700;padding:1px 8px;border-radius:20px}
+.st-item.done .st-tag{background:rgba(16,185,129,.15);color:var(--green)}
+.st-item.active .st-tag{background:rgba(245,158,11,.15);color:var(--amber)}
+.st-item.upcoming .st-tag{background:var(--ink4);color:var(--muted)}
+
+/* stats grid */
+.stats-grid{display:grid;grid-template-rows:repeat(2,auto);gap:8px;min-width:280px}
+.stats-row{display:flex;gap:8px}
+.stat-card{flex:1;background:var(--ink3);border:1px solid var(--line);border-radius:var(--r2);padding:12px 16px;text-align:center}
+.sc-num{font-size:26px;font-weight:900;color:var(--white);line-height:1;font-variant-numeric:tabular-nums}
+.sc-lbl{font-size:9.5px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-top:3px}
+.sc-num.indigo{color:var(--indigo)}
+.sc-num.green{color:var(--green)}
+.sc-num.amber{color:var(--amber)}
+
+/* ── BODY ── */
+.body{max-width:1400px;margin:0 auto;padding:24px 32px 60px}
+
+/* ── CONTROLS ── */
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search-input{width:100%;padding:9px 12px 9px 36px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--r);font-family:inherit;font-size:13px;color:var(--fg);transition:.15s}
+.search-input:focus{outline:none;border-color:var(--indigo);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+.search-input::placeholder{color:var(--muted)}
+select.ctl{padding:9px 30px 9px 12px;background:var(--ink3);border:1px solid var(--line);border-radius:var(--r);font-family:inherit;font-size:12.5px;color:var(--fg2);cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6b8a' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:.15s}
+select.ctl:focus{outline:none;border-color:var(--indigo)}
+.count-tag{padding:6px 14px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.2);color:var(--indigo);border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap;margin-left:auto}
+
+/* ── FILTER PILLS ── */
+.filters{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.fp{padding:5px 14px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted2);transition:all .15s;display:flex;align-items:center;gap:5px;user-select:none}
+.fp:hover{border-color:var(--line2);color:var(--fg2);background:var(--ink3)}
+.fp.active{background:var(--indigo);border-color:var(--indigo);color:#fff}
+.fp .n{font-size:10px;background:rgba(255,255,255,.15);padding:1px 6px;border-radius:10px}
+.fp:not(.active) .n{background:var(--ink3);color:var(--muted)}
+
+/* ── TABLE ── */
+.tbl-wrap{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r3);overflow:hidden}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:920px}
+thead{background:var(--ink3);border-bottom:1px solid var(--line)}
+th{padding:11px 16px;text-align:left;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;white-space:nowrap;user-select:none}
+th.sortable{cursor:pointer;transition:color .15s}
+th.sortable:hover,th.sorted{color:var(--indigo)}
+.sarr{margin-left:4px;opacity:.3;font-size:10px;transition:opacity .15s}
+th.sorted .sarr{opacity:1}
+tbody tr{border-bottom:1px solid var(--line);transition:background .1s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.025)}
+td{padding:0}
+.row-inner{padding:14px 16px;display:contents}
+
+/* ── RANK CELL ── */
+.rank-td{width:52px;text-align:center;padding:14px 0 14px 16px}
+.rank-n{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:var(--r);font-size:12px;font-weight:800;background:var(--ink3);color:var(--muted);border:1px solid var(--line)}
+/* tie highlight for multiple people at same rank */
+.rank-n.tied{background:rgba(99,102,241,.1);border-color:rgba(99,102,241,.3);color:var(--indigo)}
+
+/* ── PERSON CELL ── */
+.person-td{padding:14px 16px;min-width:210px}
+.pcell{display:flex;align-items:center;gap:10px}
+.av{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;letter-spacing:-.5px}
+.pname{font-size:13px;font-weight:700;color:var(--fg);line-height:1.3;letter-spacing:-.2px}
+.pgh{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--indigo);margin-top:2px;display:flex;align-items:center;gap:3px}
+.pgh a{color:inherit;text-decoration:none}
+.pgh a:hover{text-decoration:underline}
+.pmeta{font-size:10px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.chip{display:inline-block;padding:1px 7px;border-radius:5px;font-size:9px;font-weight:700;letter-spacing:.2px}
+.c-SNIST{background:rgba(139,92,246,.15);color:#a78bfa}
+.c-GNITS{background:rgba(59,130,246,.15);color:#60a5fa}
+.c-VITB{background:rgba(16,185,129,.15);color:#34d399}
+.c-KLHA{background:rgba(245,158,11,.15);color:#fbbf24}
+.c-KLHB{background:rgba(251,146,60,.15);color:#fb923c}
+.c-BVRIT,.c-BVRITH{background:rgba(6,182,212,.15);color:#22d3ee}
+.c-MGIT{background:rgba(236,72,153,.15);color:#f472b6}
+.c-CMRCET{background:rgba(99,102,241,.15);color:#818cf8}
+.c-VNRVJIET{background:rgba(167,139,250,.15);color:#a78bfa}
+.c-OTHER{background:var(--ink4);color:var(--muted2)}
+
+/* ── GOALS CELL ── */
+.goals-td{padding:14px 16px;min-width:360px}
+.sess-block{display:flex;gap:14px;flex-wrap:wrap}
+.sg{display:flex;flex-direction:column;gap:4px}
+.sg-label{font-size:8.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.sg-pills{display:flex;gap:3px;flex-wrap:wrap}
+.gp{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:5px;font-size:9px;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.gp.done{background:rgba(16,185,129,.1);color:var(--green);border-color:rgba(16,185,129,.2)}
+.gp.pending{background:rgba(245,158,11,.1);color:var(--amber);border-color:rgba(245,158,11,.2)}
+.gp.stuck{background:rgba(239,68,68,.1);color:var(--red);border-color:rgba(239,68,68,.15)}
+.gp.notdone{background:var(--ink3);color:var(--muted);border-color:var(--line)}
+.gp svg{width:8px;height:8px;flex-shrink:0}
+
+/* progress bar under goals */
+.pbar-wrap{margin-top:8px;display:flex;align-items:center;gap:8px}
+.pbar-bg{flex:1;height:3px;background:var(--line);border-radius:3px;overflow:hidden;max-width:160px}
+.pbar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.pbar-full{background:linear-gradient(90deg,var(--green),var(--cyan))}
+.pbar-high{background:linear-gradient(90deg,var(--indigo),var(--violet))}
+.pbar-mid{background:var(--amber)}
+.pbar-low{background:var(--line2)}
+.pbar-pct{font-size:10px;font-weight:700;color:var(--muted2);font-variant-numeric:tabular-nums}
+
+/* ── SCORE CELL ── */
+.score-td{padding:14px 16px;text-align:center;min-width:76px}
+.score-val{font-size:22px;font-weight:900;color:var(--fg);font-variant-numeric:tabular-nums;line-height:1}
+.score-max{font-size:11px;color:var(--muted);font-weight:500}
+.score-val.s5{color:var(--green)}
+.score-val.s3{color:var(--indigo)}
+.score-val.s1{color:var(--amber)}
+
+/* ── STATUS CELL ── */
+.status-td{padding:14px 16px;min-width:110px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10.5px;font-weight:700;white-space:nowrap;border:1px solid transparent}
+.badge.b-perfect{background:rgba(16,185,129,.1);color:var(--green);border-color:rgba(16,185,129,.2)}
+.badge.b-active{background:rgba(99,102,241,.1);color:var(--indigo);border-color:rgba(99,102,241,.2)}
+.badge.b-partial{background:rgba(245,158,11,.1);color:var(--amber);border-color:rgba(245,158,11,.2)}
+.badge.b-trying{background:rgba(239,68,68,.08);color:var(--red);border-color:rgba(239,68,68,.15)}
+.badge.b-ghost{background:var(--ink3);color:var(--muted);border-color:var(--line)}
+
+/* ── EMPTY ── */
+.empty{padding:60px;text-align:center;color:var(--muted)}
+.empty p{margin-top:8px;font-size:13px}
+
+/* ── LEGEND ── */
+.legend{display:flex;gap:16px;flex-wrap:wrap;padding:11px 16px;background:rgba(255,255,255,.02);border-bottom:1px solid var(--line)}
+.li{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--muted2)}
+.ld{width:9px;height:9px;border-radius:3px;flex-shrink:0}
+
+/* ── COLLEGE BREAKDOWN ── */
+.breakdown{background:var(--ink2);border:1px solid var(--line);border-radius:var(--r3);padding:20px 24px;margin-bottom:20px}
+.bd-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:14px}
+.bd-bars{display:flex;flex-direction:column;gap:8px}
+.bd-row{display:flex;align-items:center;gap:10px}
+.bd-lbl{font-size:11.5px;font-weight:600;color:var(--fg2);min-width:80px}
+.bd-track{flex:1;height:6px;background:var(--line);border-radius:3px;overflow:hidden;max-width:280px}
+.bd-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--indigo),var(--violet));transition:width .6s ease}
+.bd-nums{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+@media(max-width:900px){
+  .topbar{padding:0 16px}
+  .hero{padding:20px 16px}
+  .hero-inner{grid-template-columns:1fr;gap:20px}
+  .body{padding:16px 16px 40px}
+  .stats-grid{grid-template-rows:auto;grid-template-columns:repeat(2,1fr)}
+  .stats-row{flex-wrap:wrap}
+  .tb-title{display:none}
+  .breakdown{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<nav class="topbar">
+  <div class="tb-left">
+    <div class="tb-logo">∞</div>
+    <span class="tb-brand">BeingInfinity</span>
+    <span class="tb-sep">/</span>
+    <span class="tb-title">SpringBoot Starter · Cohort 2</span>
+  </div>
+  <div class="tb-right">
+    <div class="live-dot"></div>
+    <span class="tb-live">LIVE · Session 2 of 4</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Cohort 2 Leaderboard</div>
+      <h1 class="hero-h1">SpringBoot <em>Starter</em><br>Who's Shipping?</h1>
+      <p class="hero-sub">5 goals tracked across 2 sessions · 55 participants · GitHub-verified progress · Hyderabad, India</p>
+
+      <!-- Session track -->
+      <div class="session-track">
+        <div class="st-item done">
+          <div class="st-num">Session 01</div>
+          <div class="st-name">Foundation</div>
+          <span class="st-tag">✓ Complete</span>
+        </div>
+        <div class="st-item active">
+          <div class="st-num">Session 02</div>
+          <div class="st-name">Frontend</div>
+          <span class="st-tag">⚡ Current</span>
+        </div>
+        <div class="st-item upcoming">
+          <div class="st-num">Session 03</div>
+          <div class="st-name">APIs &amp; Deployment</div>
+          <span class="st-tag">Upcoming</span>
+        </div>
+        <div class="st-item upcoming">
+          <div class="st-num">Session 04</div>
+          <div class="st-name">Backend &amp; Frontend Integration</div>
+          <span class="st-tag">Upcoming</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stats-row">
+        <div class="stat-card"><div class="sc-num" id="stat-total">55</div><div class="sc-lbl">Students</div></div>
+        <div class="stat-card"><div class="sc-num indigo" id="stat-active">—</div><div class="sc-lbl">Submitted</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="sc-num green" id="stat-s1">—</div><div class="sc-lbl">S1 Done</div></div>
+        <div class="stat-card"><div class="sc-num amber" id="stat-s2">—</div><div class="sc-lbl">S2 Done</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BODY -->
+<div class="body">
+
+  <!-- College breakdown -->
+  <div class="breakdown" id="breakdownSection">
+    <div class="bd-title">Progress by College</div>
+    <div class="bd-bars" id="bdBars"></div>
+  </div>
+
+  <!-- Controls -->
+  <div class="controls">
+    <div class="search-wrap">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search name, GitHub handle, roll number…">
+    </div>
+    <select class="ctl" id="collegeFilter">
+      <option value="">All Colleges</option>
+      <option value="SNIST">SNIST</option>
+      <option value="GNITS">GNITS</option>
+      <option value="VITB">VITB</option>
+      <option value="KLHA">KL Hyderabad (A)</option>
+      <option value="KLHB">KL Hyderabad (B)</option>
+      <option value="BVRIT">BVRIT</option>
+      <option value="MGIT">MGIT</option>
+      <option value="CMRCET">CMRCET</option>
+      <option value="VNRVJIET">VNRVJIET</option>
+      <option value="OTHER">Other</option>
+    </select>
+    <select class="ctl" id="sortSelect">
+      <option value="score_desc">Score: High → Low</option>
+      <option value="score_asc">Score: Low → High</option>
+      <option value="name_asc">Name: A → Z</option>
+      <option value="sr_asc">SR #</option>
+    </select>
+    <div class="count-tag" id="countTag">55 participants</div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters" id="filterRow">
+    <div class="fp active" data-filter="ALL">All <span class="n" id="cnt-ALL">55</span></div>
+    <div class="fp" data-filter="PERFECT">🏁 Perfect 5/5 <span class="n" id="cnt-PERFECT">0</span></div>
+    <div class="fp" data-filter="S2DONE">⚡ S2 Active <span class="n" id="cnt-S2DONE">0</span></div>
+    <div class="fp" data-filter="S1ONLY">✓ S1 Done <span class="n" id="cnt-S1ONLY">0</span></div>
+    <div class="fp" data-filter="TRYING">🔧 Trying S2 <span class="n" id="cnt-TRYING">0</span></div>
+    <div class="fp" data-filter="NONE">⏳ Not Started <span class="n" id="cnt-NONE">0</span></div>
+  </div>
+
+  <!-- Table -->
+  <div class="tbl-wrap">
+    <div class="legend">
+      <span class="li"><span class="ld" style="background:rgba(16,185,129,.4)"></span>Completed</span>
+      <span class="li"><span class="ld" style="background:rgba(245,158,11,.4)"></span>Will Complete After Class</span>
+      <span class="li"><span class="ld" style="background:rgba(239,68,68,.3)"></span>Got Stuck</span>
+      <span class="li"><span class="ld" style="background:var(--ink3)"></span>Not Submitted</span>
+    </div>
+    <div class="tbl-scroll">
+      <table id="leaderTable">
+        <thead>
+          <tr>
+            <th style="width:52px">#</th>
+            <th class="sortable" data-col="name">Participant <span class="sarr">↕</span></th>
+            <th>Goal Progress <span style="font-size:9px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--muted)">&nbsp;S1 · S2</span></th>
+            <th class="sortable sorted" data-col="score" style="text-align:center">Score <span class="sarr">↓</span></th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="empty" id="emptyState" style="display:none">
+    <svg width="36" height="36" fill="none" viewBox="0 0 24 24" stroke="var(--muted)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35"/></svg>
+    <p>No participants match your filters.</p>
+  </div>
+</div>
+
+<footer style="text-align:center;padding:24px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)">
+  BeingInfinity · SpringBoot Starter Cohort 2 · 55 Participants · Hyderabad, India &nbsp;·&nbsp; Session 2 / 4 Complete
+</footer>
+
+<script>
+const GOALS = [
+  {key:'s1g1', label:'s1g1', title:'Create & Clone Repo',    session:'S1'},
+  {key:'s1g2', label:'s1g2', title:'Setup SpringBoot',       session:'S1'},
+  {key:'s2g1', label:'s2g1', title:'Build Navbar',           session:'S2'},
+  {key:'s2g2', label:'s2g2', title:'Static Card',            session:'S2'},
+  {key:'s2g3', label:'s2g3', title:'Toggle Card',            session:'S2'},
+];
+
+const ACOLORS=[
+  ['#312e81','#a5b4fc'],['#1e3a5f','#60a5fa'],['#064e3b','#34d399'],
+  ['#451a03','#fbbf24'],['#3b0764','#d8b4fe'],['#164e63','#22d3ee'],
+  ['#4a1942','#f0abfc'],['#1c1917','#d6d3d1'],['#1e1b4b','#818cf8'],
+  ['#0f172a','#94a3b8'],['#1a2e05','#86efac'],['#2d1657','#c4b5fd'],
+];
+
+const DATA = [{"sr":1,"name":"Srijith Ch","college":"SNIST","rollnumber":"24311A6684","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":2,"name":"AKHIL GANDLOJI","college":"SNIST","rollnumber":"24311a1230","githubrepo":"https://github.com/akhilgandloji789/Spring-boot-beginner.git","githubhandle":"akhilgandloji789","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":3,"name":"Hasini Kalwa","college":"GNITS","rollnumber":"24251A66B1","githubrepo":"https://github.com/hasini-kalwa/springboard-beginner","githubhandle":"hasini-kalwa","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":4,"name":"K.Lahari","college":"GNITS","rollnumber":"24251A05L8","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":5,"name":"Shaik Abdul Lateef","college":"VITB","rollnumber":"24PA1A12L4","githubrepo":"https://github.com/Skabdullateef/springboot-beginner","githubhandle":"Skabdullateef","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":6,"name":"Ramireddy Bhagavathi Srija Reddy","college":"KLHA","rollnumber":"2410030028","githubrepo":"https://github.com/Rbhagavathisrijareddy/clgspringboot","githubhandle":"Rbhagavathisrijareddy","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":7,"name":"Anegunta Sai Krishna","college":"KLHB","rollnumber":"2320030414","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":8,"name":"Maitreyi.I","college":"KLHA","rollnumber":"2410030244","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":9,"name":"Niveditha Chaganti","college":"VITB","rollnumber":"24PA1A4221","githubrepo":"https://github.com/Niveditha-286/SpringBoot-Beginner","githubhandle":"Niveditha-286","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":10,"name":"Pujitha Bolisetty","college":"VITB","rollnumber":"24pa1a1232","githubrepo":"https://github.com/pujithab27/SpringBoot_Beginner","githubhandle":"pujithab27","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":11,"name":"charan mirthipathi","college":"KLHA","rollnumber":"2410030149","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":12,"name":"Narigela Bhargavi","college":"KLHA","rollnumber":"2410030393","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":13,"name":"Vurukonda Vikitha","college":"KLHA","rollnumber":"2410030495","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":14,"name":"Ega Varshitha","college":"KLHA","rollnumber":"2410030394","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":15,"name":"Saranya Temmanaboyina","college":"KLHA","rollnumber":"2410080061","githubrepo":"https://github.com/Saranya0430/springboot_beginner","githubhandle":"Saranya0430","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":16,"name":"Sanjana Bikkanagari","college":"KLHA","rollnumber":"2410080059","githubrepo":"https://github.com/Sanajana-reddy/Springboot-bootcamp","githubhandle":"Sanajana-reddy","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":17,"name":"Vennela Pallepu","college":"KLHA","rollnumber":"2410080070","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":18,"name":"Chinthapally Aravind","college":"SNIST","rollnumber":"25315a6617","githubrepo":"https://github.com/Aravind9956/springboot-newbie","githubhandle":"Aravind9956","s1g1":"DONE","s1g2":"DONE","s2g1":"PENDING","s2g2":"STUCK","s2g3":"STUCK"},{"sr":19,"name":"KOTHAPALLI AMULYA","college":"SNIST","rollnumber":"24311a05f3","githubrepo":"https://github.com/Amulya03092006/springboot-beginner","githubhandle":"Amulya03092006","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":20,"name":"Bhoomika Padala","college":"MGIT","rollnumber":"23261A1250","githubrepo":"https://github.com/bhoomika-padala/springboot-beginner","githubhandle":"bhoomika-padala","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":21,"name":"N. Anjaneyulu","college":"SNIST","rollnumber":"24311A04D5","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":22,"name":"Rishika Tirumala","college":"KLHA","rollnumber":"2410030122","githubrepo":"https://github.com/rishika-0703/springboot_vs.git","githubhandle":"rishika-0703","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":23,"name":"Surabhi Sarda","college":"KLHA","rollnumber":"2410030123","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":24,"name":"Yashaswini Noole","college":"BVRITH","rollnumber":"24WH1A6662","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":25,"name":"Kuna balaji","college":"VITB","rollnumber":"24pa1a12b3","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":26,"name":"Merla Hemanth Satyanarayana","college":"VITB","rollnumber":"24pa1a05f2","githubrepo":"https://github.com/24pa1a05f2-design/SpringBoot-Beginner","githubhandle":"24pa1a05f2-design","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":27,"name":"JAMI LOKESH","college":"KLHA","rollnumber":"2410030169","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":28,"name":"SATHWIK BUSSA","college":"KLHA","rollnumber":"2410030314","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":29,"name":"MUKKAMALLA ASWITHA","college":"KLHA","rollnumber":"2410030326","githubrepo":"https://github.com/Aswitha231/springboot-beginner","githubhandle":"Aswitha231","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":30,"name":"MOHAMMAD UMAR","college":"KLHA","rollnumber":"2410030341","githubrepo":"https://github.com/UMARMOHAMMAD341/springboot-beginner","githubhandle":"UMARMOHAMMAD341","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":31,"name":"Manda Nandu","college":"VITB","rollnumber":"24PA1A05E1","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":32,"name":"Chokkam Neeraj","college":"KLHB","rollnumber":"2320030485","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":33,"name":"HARSHADA REDDY","college":"VNRVJIET","rollnumber":"23071A6673","githubrepo":"https://github.com/Aharshada45/spring_boot","githubhandle":"Aharshada45","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":34,"name":"Meghana Batchalakuri","college":"SNIST","rollnumber":"22311A05J5","githubrepo":"https://github.com/mmeeghana/springboot","githubhandle":"mmeeghana","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":35,"name":"Durga Shankar","college":"MGIT","rollnumber":"22261A3217","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":36,"name":"PRANUSHA MIRYALA","college":"OTHER","rollnumber":"22881A12G4","githubrepo":"https://github.com/PranushaMiryala/springboot-beginer","githubhandle":"PranushaMiryala","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":37,"name":"LOKINENI HARSHITH","college":"OTHER","rollnumber":"24BK1A05H2","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":38,"name":"Akula Nagasai","college":"OTHER","rollnumber":"25BCE8528","githubrepo":"https://github.com/Nagasai2008/springboot-beginner1","githubhandle":"Nagasai2008","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":39,"name":"Chandrakanth G","college":"BVRIT","rollnumber":"21211A05A2","githubrepo":"https://github.com/Chandrakanth174/springboot-project","githubhandle":"Chandrakanth174","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":40,"name":"Avinash Paladugula","college":"BVRIT","rollnumber":"21211A6637","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":41,"name":"Yamagani Varshith","college":"OTHER","rollnumber":"25N81A0537","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":42,"name":"Rohith Reddy Avija","college":"BVRIT","rollnumber":"22211A6608","githubrepo":"https://github.com/rohithreddie1/springboot-beginner","githubhandle":"rohithreddie1","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":43,"name":"B.Bhavyasri","college":"CMRCET","rollnumber":"23H51A66BQ","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":44,"name":"Naga Chand","college":"KLHA","rollnumber":"2210030313","githubrepo":"https://github.com/HemaNagaChand-Boppana/SpringBoot","githubhandle":"HemaNagaChand-Boppana","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":45,"name":"Kashish Agarwal","college":"MGIT","rollnumber":"23261A3218","githubrepo":"https://github.com/kashish050605/springboot-beginner","githubhandle":"kashish050605","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":46,"name":"Sneha","college":"MGIT","rollnumber":"Na","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":47,"name":"Jahnavi Marrapu","college":"ACE","rollnumber":"23AG1A67G5","githubrepo":"https://github.com/Jahnavim12/springboot-beginner","githubhandle":"Jahnavim12","s1g1":"DONE","s1g2":"DONE","s2g1":null,"s2g2":null,"s2g3":null},{"sr":48,"name":"Pranathi Gumudala","college":"MGIT","rollnumber":"22261A05E6","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":49,"name":"Keerthana Gurrala","college":"MGIT","rollnumber":"22261A05E7","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":50,"name":"Nampally Srujan Kumar","college":"CMRCET","rollnumber":"23H51A6650","githubrepo":"https://github.com/mrhacker-cpu/spring-boot-workshop.git","githubhandle":"mrhacker-cpu","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":51,"name":"Swathi Kannabouina","college":"KLHA","rollnumber":"2410030248","githubrepo":"https://github.com/swathi2703-blip/SpringBoot-Beginner-Project","githubhandle":"swathi2703-blip","s1g1":"DONE","s1g2":"DONE","s2g1":"DONE","s2g2":"DONE","s2g3":"DONE"},{"sr":52,"name":"Z ESWAR SAINATH REDDY","college":"CMRCET","rollnumber":"23H51A6665","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":53,"name":"SOHAN SAI P","college":"KLU","rollnumber":"2100089004","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":54,"name":"Mavidi Lakshmi Praneeth","college":"MRU","rollnumber":"2211CS050148","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null},{"sr":55,"name":"Y Venkatramulu","college":"CMRCET","rollnumber":"23H51A05K5","githubrepo":null,"githubhandle":"","s1g1":null,"s1g2":null,"s2g1":null,"s2g2":null,"s2g3":null}];
+
+/* helpers */
+function score(p){ return GOALS.filter(g=>p[g.key]==='DONE').length }
+function initials(n){ return n.trim().split(/\s+/).slice(0,2).map(w=>w[0].toUpperCase()).join('') }
+function avatarColor(n){ let h=0;for(let c of n)h=(h*31+c.charCodeAt(0))&0xffff;return ACOLORS[h%ACOLORS.length] }
+function normCollege(c){
+  const m={'vardhaman college of engineering':'OTHER',"st peter's engineering college":'OTHER','vit amaravati':'OTHER','sphoorthy engineering college':'OTHER','bvrit':'BVRIT','bvrith':'BVRITH'};
+  return m[c.toLowerCase().trim()]||c.toUpperCase();
+}
+function chipClass(raw){
+  const c=normCollege(raw);
+  return ['SNIST','GNITS','VITB','KLHA','KLHB','BVRIT','BVRITH','MGIT','CMRCET','VNRVJIET'].includes(c)?`c-${c}`:'c-OTHER';
+}
+function chipLabel(raw){
+  const c=normCollege(raw);
+  const m={'KLHA':'KL-A','KLHB':'KL-B','OTHER':'Other'};
+  return m[c]||c;
+}
+
+const IC={
+  done:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 6 12 14 4"/></svg>`,
+  clock:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="8" cy="8" r="6"/><polyline points="8 5 8 8 10 10"/></svg>`,
+  x:`<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="4" y1="4" x2="12" y2="12"/><line x1="12" y1="4" x2="4" y2="12"/></svg>`,
+  dot:`<svg viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="2.5"/></svg>`,
+  gh:`<svg viewBox="0 0 16 16" width="11" height="11" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>`
+};
+
+function pill(key, val, title){
+  if(val==='DONE')    return `<span class="gp done"    title="${title}">${IC.done}${key}</span>`;
+  if(val==='PENDING') return `<span class="gp pending" title="${title}">${IC.clock}${key}</span>`;
+  if(val==='STUCK')   return `<span class="gp stuck"   title="${title}">${IC.x}${key}</span>`;
+  return `<span class="gp notdone" title="${title}">${IC.dot}${key}</span>`;
+}
+
+function statusBadge(p){
+  const s=score(p);
+  if(s===5) return `<span class="badge b-perfect">✦ Perfect</span>`;
+  if(p.s2g1==='DONE') return `<span class="badge b-active">⚡ S2 Active</span>`;
+  if(p.s2g1==='PENDING'||p.s2g1==='STUCK'||p.s2g2==='STUCK') return `<span class="badge b-trying">↯ Trying S2</span>`;
+  if(p.s1g1==='DONE'&&p.s1g2==='DONE') return `<span class="badge b-partial">✓ S1 Done</span>`;
+  if(s>0) return `<span class="badge b-partial">↗ Started</span>`;
+  return `<span class="badge b-ghost">— Not Started</span>`;
+}
+
+let activeFilter='ALL';
+let sortMode='score_desc';
+
+function processed(){
+  return DATA.map(p=>({...p, _score:score(p), _nc:normCollege(p.college)}));
+}
+
+function filtered(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const col=document.getElementById('collegeFilter').value;
+  return processed().filter(p=>{
+    const mc=!col||(()=>{
+      const n=p._nc;
+      if(col==='OTHER') return !['SNIST','GNITS','VITB','KLHA','KLHB','BVRIT','MGIT','CMRCET','VNRVJIET'].includes(n);
+      return n===col;
+    })();
+    const ms=!q||p.name.toLowerCase().includes(q)||p.githubhandle.toLowerCase().includes(q)||p.rollnumber.toLowerCase().includes(q);
+    let mf=true;
+    if(activeFilter==='PERFECT') mf=p._score===5;
+    if(activeFilter==='S2DONE')  mf=p.s2g1==='DONE';
+    if(activeFilter==='S1ONLY')  mf=p.s1g1==='DONE'&&p.s1g2==='DONE'&&!p.s2g1;
+    if(activeFilter==='TRYING')  mf=(p.s2g1==='PENDING'||p.s2g1==='STUCK'||p.s2g2==='STUCK')&&p._score<5;
+    if(activeFilter==='NONE')    mf=p._score===0;
+    return mc&&ms&&mf;
+  });
+}
+
+function sorted(rows){
+  return [...rows].sort((a,b)=>{
+    if(sortMode==='name_asc')  return a.name.localeCompare(b.name);
+    if(sortMode==='score_asc') return a._score-b._score||(a.sr-b.sr);
+    if(sortMode==='sr_asc')    return a.sr-b.sr;
+    return b._score-a._score||(a.sr-b.sr);
+  });
+}
+
+/* rank computation — same score = same rank (tied) */
+function assignRanks(rows){
+  let rank=1;
+  return rows.map((p,i)=>{
+    if(i>0&&rows[i]._score<rows[i-1]._score) rank=i+1;
+    return {...p,_rank:rank,_tied:(i<rows.length-1&&rows[i]._score===rows[i+1]._score)||(i>0&&rows[i]._score===rows[i-1]._score)};
+  });
+}
+
+function renderTable(){
+  const rows=assignRanks(sorted(filtered()));
+  const body=document.getElementById('tableBody');
+  const empty=document.getElementById('emptyState');
+  const wrap=document.querySelector('.tbl-wrap');
+  empty.style.display=rows.length?'none':'block';
+  wrap.style.display=rows.length?'':'none';
+
+  body.innerHTML=rows.map(p=>{
+    const [bg,fg]=avatarColor(p.name);
+    const s=p._score;
+    const pct=Math.round(s/5*100);
+    const pfCls=s===5?'pbar-full':s>=3?'pbar-high':s>=1?'pbar-mid':'pbar-low';
+    const svCls=s===5?'s5':s>=3?'s3':s>=1?'s1':'';
+
+    const sessMap={S1:[],S2:[]};
+    GOALS.forEach(g=>sessMap[g.session].push(g));
+    const goalsHtml=`<div class="sess-block">`+
+      Object.entries(sessMap).map(([s,gs])=>
+        `<div class="sg"><div class="sg-label">${s}</div><div class="sg-pills">${gs.map(g=>pill(g.label,p[g.key],g.title)).join('')}</div></div>`
+      ).join('')+
+      `</div><div class="pbar-wrap"><div class="pbar-bg"><div class="pbar-fill ${pfCls}" style="width:${pct}%"></div></div><span class="pbar-pct">${s}/5</span></div>`;
+
+    const ghUrl=p.githubrepo||(p.githubhandle?`https://github.com/${p.githubhandle}`:null);
+    const ghLine=p.githubhandle&&ghUrl
+      ?`<div class="pgh">${IC.gh} <a href="${ghUrl}" target="_blank">@${p.githubhandle}</a></div>`
+      :`<div class="pgh" style="color:var(--muted);font-family:inherit;font-size:10px">No GitHub linked</div>`;
+
+    /* rank cell — show number; tied = subtle highlight, no medals */
+    const rankCls=p._tied?'tied':'';
+
+    return `<tr>
+      <td class="rank-td"><div class="rank-n ${rankCls}">${p._rank}</div></td>
+      <td class="person-td">
+        <div class="pcell">
+          <div class="av" style="background:${bg};color:${fg}">${initials(p.name)}</div>
+          <div>
+            <div class="pname">${p.name}</div>
+            ${ghLine}
+            <div class="pmeta"><span>${p.rollnumber}</span><span class="chip ${chipClass(p.college)}">${chipLabel(p.college)}</span></div>
+          </div>
+        </div>
+      </td>
+      <td class="goals-td">${goalsHtml}</td>
+      <td class="score-td"><div class="score-val ${svCls}">${s}<span class="score-max">/5</span></div></td>
+      <td class="status-td">${statusBadge(p)}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('countTag').textContent=`${rows.length} participant${rows.length!==1?'s':''}`;
+}
+
+function updateStats(){
+  const all=processed();
+  document.getElementById('stat-total').textContent=all.length;
+  document.getElementById('stat-active').textContent=all.filter(p=>p._score>0).length;
+  document.getElementById('stat-s1').textContent=all.filter(p=>p.s1g1==='DONE'&&p.s1g2==='DONE').length;
+  document.getElementById('stat-s2').textContent=all.filter(p=>p.s2g1==='DONE').length;
+
+  document.getElementById('cnt-ALL').textContent=all.length;
+  document.getElementById('cnt-PERFECT').textContent=all.filter(p=>p._score===5).length;
+  document.getElementById('cnt-S2DONE').textContent=all.filter(p=>p.s2g1==='DONE').length;
+  document.getElementById('cnt-S1ONLY').textContent=all.filter(p=>p.s1g1==='DONE'&&p.s1g2==='DONE'&&!p.s2g1).length;
+  document.getElementById('cnt-TRYING').textContent=all.filter(p=>(p.s2g1==='PENDING'||p.s2g1==='STUCK'||p.s2g2==='STUCK')&&p._score<5).length;
+  document.getElementById('cnt-NONE').textContent=all.filter(p=>p._score===0).length;
+
+  /* college breakdown */
+  const colleges=['SNIST','GNITS','VITB','KLHA','KLHB','BVRIT','MGIT','CMRCET','VNRVJIET'];
+  const cData=colleges.map(c=>{
+    const members=all.filter(p=>p._nc===c);
+    const done=members.filter(p=>p._score>0).length;
+    return {c,members:members.length,done};
+  }).filter(d=>d.members>0).sort((a,b)=>b.done-a.done||b.members-a.members);
+  const maxDone=Math.max(...cData.map(d=>d.done),1);
+  document.getElementById('bdBars').innerHTML=cData.map(d=>{
+    const pct=Math.round(d.done/d.members*100);
+    const barW=Math.round(d.done/maxDone*100);
+    return `<div class="bd-row">
+      <div class="bd-lbl">${d.c}</div>
+      <div class="bd-track"><div class="bd-bar" style="width:${barW}%"></div></div>
+      <div class="bd-nums">${d.done}/${d.members} submitted &nbsp;·&nbsp; <strong style="color:var(--fg2)">${pct}%</strong></div>
+    </div>`;
+  }).join('');
+}
+
+/* events */
+document.getElementById('filterRow').addEventListener('click',e=>{
+  const fp=e.target.closest('.fp');if(!fp)return;
+  document.querySelectorAll('.fp').forEach(t=>t.classList.remove('active'));
+  fp.classList.add('active');activeFilter=fp.dataset.filter;renderTable();
+});
+document.getElementById('searchInput').addEventListener('input',renderTable);
+document.getElementById('collegeFilter').addEventListener('change',renderTable);
+document.getElementById('sortSelect').addEventListener('change',e=>{
+  sortMode=e.target.value;
+  document.querySelectorAll('th.sortable').forEach(t=>t.classList.remove('sorted'));
+  const colMap={'score_desc':'score','score_asc':'score','name_asc':'name'};
+  const activeCol=colMap[sortMode];
+  if(activeCol){const th=document.querySelector(`th[data-col="${activeCol}"]`);if(th){th.classList.add('sorted');th.querySelector('.sarr').textContent=sortMode.endsWith('_asc')?'↑':'↓';}}
+  renderTable();
+});
+document.querySelectorAll('th.sortable').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const col=th.dataset.col;
+    const sel=document.getElementById('sortSelect');
+    if(col==='score') sel.value=sel.value==='score_desc'?'score_asc':'score_desc';
+    if(col==='name')  sel.value=sel.value==='name_asc'?'score_desc':'name_asc';
+    sortMode=sel.value;
+    document.querySelectorAll('th.sortable').forEach(t=>t.classList.remove('sorted'));
+    th.classList.add('sorted');
+    th.querySelector('.sarr').textContent=sortMode.endsWith('_asc')?'↑':'↓';
+    renderTable();
+  });
+});
+
+updateStats();
+renderTable();
+</script>
+</body>
+</html>
+HTMLEOF
+echo "Done, lines: $(wc -l < /mnt/user-data/outputs/cohort2_leaderboard.html)"
